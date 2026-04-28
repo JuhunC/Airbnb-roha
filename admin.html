@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — Property Assistant</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-body">
+
+  <!-- Login -->
+  <div id="login-section">
+    <div class="login-container">
+      <div class="card">
+        <div class="card-logo">🏠</div>
+        <h2 id="login-title">Admin Login</h2>
+        <p id="login-subtitle">Enter your password to manage the property chatbot.</p>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Enter password" required autocomplete="current-password">
+          </div>
+          <div class="form-group" id="confirm-group" style="display:none">
+            <label for="confirm-password">Confirm Password</label>
+            <input type="password" id="confirm-password" placeholder="Confirm password" autocomplete="new-password">
+          </div>
+          <p class="error-msg" id="login-error"></p>
+          <button type="submit" class="btn btn-primary" style="margin-top:8px">
+            <span id="login-btn-text">Login</span>
+          </button>
+        </form>
+        <p class="back-link"><a href="index.html">← Back to chat</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard-section" style="display:none">
+    <header class="admin-header">
+      <div class="header-info">
+        <span class="header-icon">🏠</span>
+        <h1>Property Admin</h1>
+      </div>
+      <div class="header-actions">
+        <a href="index.html" target="_blank" class="btn btn-outline">Preview Chat ↗</a>
+        <button class="btn btn-ghost" onclick="logout()">Logout</button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <div id="setup-banner" class="setup-banner" style="display:none">
+        ⚠️ <strong>Setup required:</strong> Add your Claude API key in the <strong>API Settings</strong> tab to activate the chatbot.
+      </div>
+
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="tab-property">Property Info</button>
+        <button class="tab-btn" data-tab="tab-details">Rules &amp; Details</button>
+        <button class="tab-btn" data-tab="tab-api">API Settings</button>
+        <button class="tab-btn" data-tab="tab-security">Security</button>
+      </nav>
+
+      <!-- Tab: Property Info -->
+      <div id="tab-property" class="tab-panel active">
+        <div class="card">
+          <h2 class="section-title">Property Information</h2>
+          <div class="form-group">
+            <label>Airbnb Listing URL <span class="label-optional">(optional, for reference)</span></label>
+            <input type="url" id="prop-url" placeholder="https://airbnb.com/rooms/...">
+            <p class="hint">The chatbot uses the details you enter below — paste your listing info in the fields.</p>
+          </div>
+          <div class="form-group">
+            <label>Property Name <span class="label-required">*</span></label>
+            <input type="text" id="prop-name" placeholder="e.g. Cozy Apartment in Hongdae">
+          </div>
+          <div class="form-group">
+            <label>Location / Neighborhood</label>
+            <input type="text" id="prop-location" placeholder="e.g. Hongdae, Seoul, South Korea">
+          </div>
+          <div class="form-group">
+            <label>Property Description</label>
+            <textarea id="prop-description" placeholder="Describe your property — what makes it special, the vibe, nearby attractions, etc."></textarea>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Check-in Time</label>
+              <input type="text" id="prop-checkin-time" placeholder="e.g. 3:00 PM">
+            </div>
+            <div class="form-group">
+              <label>Check-out Time</label>
+              <input type="text" id="prop-checkout-time" placeholder="e.g. 11:00 AM">
+            </div>
+            <div class="form-group">
+              <label>Max Guests</label>
+              <input type="number" id="prop-max-guests" placeholder="e.g. 4" min="1">
+            </div>
+            <div class="form-group">
+              <label>Bedrooms</label>
+              <input type="number" id="prop-bedrooms" placeholder="e.g. 2" min="0">
+            </div>
+            <div class="form-group">
+              <label>Bathrooms</label>
+              <input type="number" id="prop-bathrooms" placeholder="e.g. 1" min="0" step="0.5">
+            </div>
+          </div>
+          <div class="save-bar">
+            <span class="success-msg" id="prop-save-msg">✓ Saved</span>
+            <button class="btn btn-primary" onclick="saveProperty()">Save Property Info</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Rules & Details -->
+      <div id="tab-details" class="tab-panel">
+        <div class="card">
+          <h2 class="section-title">Rules &amp; Details</h2>
+          <div class="form-group">
+            <label>Amenities</label>
+            <textarea id="prop-amenities" placeholder="List amenities, one per line. e.g.&#10;- WiFi (password: yourpassword)&#10;- Full kitchen&#10;- Washing machine&#10;- Air conditioning&#10;- Smart TV"></textarea>
+          </div>
+          <div class="form-group">
+            <label>House Rules</label>
+            <textarea id="prop-rules" placeholder="e.g.&#10;- No smoking&#10;- No parties or events&#10;- Quiet hours: 10 PM – 8 AM&#10;- Pets allowed"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Check-in Instructions</label>
+            <textarea id="prop-checkin-instructions" placeholder="How to access the property — key box location, entry codes, door instructions, etc."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Frequently Asked Questions</label>
+            <textarea id="prop-faq" placeholder="Common Q&amp;A. e.g.&#10;Q: Is there parking?&#10;A: Yes, free street parking is available on the side street.&#10;&#10;Q: Is early check-in possible?&#10;A: Early check-in may be possible depending on availability — please message the host."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Additional Information</label>
+            <textarea id="prop-additional" placeholder="Nearby restaurants, transport options, local tips, etc."></textarea>
+          </div>
+          <div class="save-bar">
+            <span class="success-msg" id="details-save-msg">✓ Saved</span>
+            <button class="btn btn-primary" onclick="saveDetails()">Save Rules &amp; Details</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: API Settings -->
+      <div id="tab-api" class="tab-panel">
+        <div class="card">
+          <h2 class="section-title">API Settings</h2>
+          <div class="form-group">
+            <label>Anthropic API Key <span class="label-required">*</span></label>
+            <input type="password" id="api-key" placeholder="sk-ant-..." autocomplete="off">
+            <p class="hint">Get your key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. Stored in your browser's localStorage — never sent anywhere except the Anthropic API.</p>
+          </div>
+          <div class="form-group">
+            <label>AI Model</label>
+            <select id="api-model">
+              <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 — Fast &amp; economical</option>
+              <option value="claude-sonnet-4-6">Claude Sonnet 4.6 — Balanced</option>
+              <option value="claude-opus-4-7">Claude Opus 4.7 — Most capable</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Welcome Message</label>
+            <textarea id="welcome-message" placeholder="Hi! 👋 I'm your property assistant. Feel free to ask me anything!"></textarea>
+            <p class="hint">The first message guests see when they open the chat.</p>
+          </div>
+          <div class="save-bar">
+            <span class="success-msg" id="api-save-msg">✓ Saved</span>
+            <button class="btn btn-primary" onclick="saveApiSettings()">Save API Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Security -->
+      <div id="tab-security" class="tab-panel">
+        <div class="card">
+          <h2 class="section-title">Change Admin Password</h2>
+          <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" id="cur-password" placeholder="Enter current password" autocomplete="current-password">
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" id="new-password" placeholder="At least 6 characters" autocomplete="new-password">
+          </div>
+          <div class="form-group">
+            <label>Confirm New Password</label>
+            <input type="password" id="confirm-new-password" placeholder="Confirm new password" autocomplete="new-password">
+          </div>
+          <p class="error-msg" id="pw-error"></p>
+          <p class="success-msg" id="pw-success"></p>
+          <div class="save-bar">
+            <button class="btn btn-primary" onclick="changePassword()">Change Password</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
